@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://jxqo5hs8gxd0"]
+
+[ext_resource type="Script" path="res://cameras/follow player.gd" id="1_ua1nl"]
+
+[node name="follow player" type="Camera2D"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+drag_horizontal_offset = 0.6
+editor_draw_limits = true
+script = ExtResource("1_ua1nl")
