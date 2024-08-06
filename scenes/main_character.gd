@@ -12,7 +12,7 @@ var reset_slide = true
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-# how slow the player will slide a wall down, use it do devide the gravity * delta to slow down
+# how slow the player will slide a wall down, use it do devide the (gravity * delta) to slow down
 var slide_spd = 8
 
 func _physics_process(delta):
@@ -32,7 +32,6 @@ func _physics_process(delta):
 		if reset_slide:
 			velocity.y = 0
 			reset_slide = false
-		print(velocity.y)
 		velocity.y += (gravity * delta) / slide_spd
 		sprite_2d.animation = "sliding"
 	# Add the gravity.
