@@ -6,11 +6,14 @@ const JUMP_VELOCITY = -450.0
 # JUMP_HOLD_TIME and jump_time are for the low and high jumps
 const JUMP_HOLD_TIME = 15
 var jump_time = 0
+var reset_slide = true
 
 @onready var sprite_2d = $AnimatedSprite2D
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+# how slow the player will slide a wall down, use it do devide the gravity * delta to slow down
+var slide_spd = 8
 
 func _physics_process(delta):
 	# variables for the character
@@ -21,19 +24,30 @@ func _physics_process(delta):
 		sprite_2d.animation = "running"
 	else:
 		sprite_2d.animation = "default"
-	
+
+	# if you are not on the floor, but stick to a wall, you are sliding
+	# the gravity is not that impactfull
+	# and change animation to sliding
+	if is_on_wall() and not is_on_floor() and velocity.y >= 0:
+		if reset_slide:
+			velocity.y = 0
+			reset_slide = false
+		print(velocity.y)
+		velocity.y += (gravity * delta) / slide_spd
+		sprite_2d.animation = "sliding"
 	# Add the gravity.
 	# and change animation to jumping
-	if not is_on_floor():
+	elif not is_on_floor():
 		velocity.y += gravity * delta
 		sprite_2d.animation = "jumping"
+		reset_slide = true
 
 	# if the jump key is released: stop going further up
 	if Input.is_action_just_released("jump"):
 		jump_time = 0
 
 	# Handle jump.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if Input.is_action_just_pressed("jump") and (is_on_floor() or is_on_wall()):
 		jump_time = JUMP_HOLD_TIME
 	
 	# jump while the jump_time is active
