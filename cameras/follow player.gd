@@ -17,17 +17,13 @@ func _ready():
 	var mapRect = tilemap.get_used_rect()
 	# get the size of a tile
 	var tileSize = tilemap.rendering_quadrant_size
-	# calculate the x and the y size of the tile
-	var mapSizeInPixels = mapRect.size * tileSize
-	
 	# set limits for the camera
-	# top and left limit are at 0, because the map starts at 0
-		# if map would have startet further to the right, better caclulations would be needed
-	# right and bottom limits are given by the mapSizeInPixels divided by the 2 border tiles at the top, bottom, left and right
-	limit_right = mapSizeInPixels.x - (tileSize * 2)
-	limit_left = 0
-	limit_bottom = mapSizeInPixels.y - (tileSize * 2)
-	limit_top = 0
+	# top and left limit are at the starpoints of the map
+	# right and bottom limits are given by the start and the tile size in x and y dimension
+	limit_right = (mapRect.position.x + mapRect.size.x) * tileSize - tileSize
+	limit_left = mapRect.position.x * tileSize + tileSize
+	limit_bottom = (mapRect.position.y + mapRect.size.y) * tileSize - tileSize
+	limit_top = mapRect.position.y * tileSize + tileSize
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

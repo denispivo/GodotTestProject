@@ -13,7 +13,8 @@ var reset_slide = true
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 # how slow the player will slide a wall down, use it do devide the (gravity * delta) to slow down
-var slide_spd = 8
+const slide_spd = 8
+const wall_jump_pushback = 100
 
 func _physics_process(delta):
 	# variables for the character
@@ -30,7 +31,7 @@ func _physics_process(delta):
 	# and change animation to sliding
 	if is_on_wall() and not is_on_floor() and velocity.y >= 0:
 		if reset_slide:
-			velocity.y = 0
+			velocity.y /= slide_spd
 			reset_slide = false
 		velocity.y += (gravity * delta) / slide_spd
 		sprite_2d.animation = "sliding"
@@ -46,8 +47,15 @@ func _physics_process(delta):
 		jump_time = 0
 
 	# Handle jump.
-	if Input.is_action_just_pressed("jump") and (is_on_floor() or is_on_wall()):
-		jump_time = JUMP_HOLD_TIME
+	if Input.is_action_just_pressed("jump"):
+		if is_on_floor():
+			jump_time = JUMP_HOLD_TIME
+		elif is_on_wall() and Input.is_action_just_pressed("right"):
+			jump_time = JUMP_HOLD_TIME
+			velocity.x = -wall_jump_pushback
+		elif is_on_wall() and Input.is_action_just_pressed("left"):
+			jump_time = JUMP_HOLD_TIME
+			velocity.x = wall_jump_pushback
 	
 	# jump while the jump_time is active
 	if jump_time > 0:
